@@ -13,7 +13,7 @@
 <p>
   <img src="https://github.com/takuuuu517/LyricsGetterBot/blob/master/pictures/1.png" width="500" alt="使い方その１">
 </p>
-
+<br /><br /><br />
 <p>
   <img src="https://github.com/takuuuu517/LyricsGetterBot/blob/master/pictures/2.png" width="500" alt="使い方その２">
 </p>
