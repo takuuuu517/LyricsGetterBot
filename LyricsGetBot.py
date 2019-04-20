@@ -28,6 +28,7 @@ from linebot.models import (
 )
 
 import credentials
+import geniusLyrics
 
 app = Flask(__name__)
 
@@ -45,8 +46,19 @@ line_bot_api = LineBotApi(channel_access_token)
 handler = WebhookHandler(channel_secret)
 
 
+# def test():
+#     print(geniusLyrics.test())
+    # geniusLyrics.songInformation("lemon","")
+    # print("hellos")
+    # response= geniusLyrics.songInformation("lemon","yonedu")
+    # json = response.json()
+    # print(json)
+    #
+    # remote_song_info = None
+
 @app.route("/callback", methods=['POST'])
 def callback():
+    # test()
     # get X-Line-Signature header value
     signature = request.headers['X-Line-Signature']
 
@@ -65,11 +77,23 @@ def callback():
 
 @handler.add(MessageEvent, message=TextMessage)
 def message_text(event):
-    language_list = ["Ruby", "Python", "PHP", "Java", "ghghg"]
+    searchtext = event.message.text
+    language_list = geniusLyrics.songInformation(searchtext)
 
-    items = [QuickReplyButton(action=MessageAction(label=f"{language}", text=f"{language}が好き")) for language in language_list]
+    # print(searchtext)
+    if( ":" in searchtext):
+        url = geniusLyrics.getUrl(language_list[0])
+        lyrics = geniusLyrics.getLyricstext(url)
+        # print(lyrics)
+        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=lyrics) )
+        return
+    elif searchtext == "ごめんなかった":
+        line_bot_api.reply_message(event.reply_token, TextSendMessage(text="Sorry") )
+        return
 
-    messages = TextSendMessage(text="どの言語が好きですか？",
+    items = [QuickReplyButton(action=MessageAction(label=f"{language}", text=f"{language}")) for language in language_list]
+
+    messages = TextSendMessage(text="曲を選んで",
                                quick_reply=QuickReply(items=items))
 
     line_bot_api.reply_message(event.reply_token, messages=messages)
